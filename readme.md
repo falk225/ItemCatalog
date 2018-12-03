@@ -1,0 +1,2 @@
+# Item Catalog
+Simple web application demonstrating create, read, update, and delete operations on a SQLLite backend. Project also include API endpoints and User Authentication and Authorization using oAuth 2.0
