@@ -1,6 +1,14 @@
 from flask import Flask, render_template, request
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import Base, User, Category, Item
 
 app = Flask(__name__)
+
+engine = create_engine('sqlite:///itemcatalog.db?check_same_thread=False')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
 
 @app.route('/')
 @app.route('/ItemCatalog')
