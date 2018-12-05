@@ -23,7 +23,9 @@ def addCategory():
         return render_template('categoryAdd.html')
     elif request.method == 'POST':
         #add new category
-        pass
+        category = Category(name=request.form['name'])
+        session.add(category)
+        session.commit()
         return redirect(url_for('viewCategories'))
 
 @app.route('/ItemCatalog/Categories/<int:categoryID>/Edit', methods=['GET','PUT'])
@@ -34,7 +36,9 @@ def editCategory(categoryID):
         return render_template('categoryEdit.html', category=category)
     elif request.method == 'PUT':
         #update category with user input
-        pass
+        category.name = request.form['name']
+        session.add(category)
+        session.commit()
         return redirect(url_for('viewCategories'))
 
 @app.route('/ItemCatalog/Categories/<int:categoryID>/Delete', methods=['GET','DELETE'])
@@ -45,22 +49,28 @@ def deleteCategory(categoryID):
         return render_template('categoryDelete.html', category=category)
     elif request.method == 'POST':
         #delete category from databaes
-        pass
+        session.delete(category)
+        session.commit()
         return redirect(url_for('viewCategories'))
 
 @app.route('/ItemCatalog/Categories/<int:categoryID>/Items/View')
 def viewItem(categoryID):
-    items = session.query(Item).filter_by(category_id).all()
+    items = session.query(Item).filter_by(categoryID).all()
     return render_template('itemView.html', items=items)
 
 @app.route('/ItemCatalog/Categories/<int:categoryID>/Items/Add', methods=['GET','POST'])
 def addItem(categoryID):
     if request.method == 'GET':
+        category = session.query(Category).filter_by(id=categoryID).one()
         #return new item form
-        return render_template('')
+        return render_template('itemAdd.html', category=category)
     elif request.method == 'POST':
         #add new item
-        pass
+        item = Item(name=request.form['name'])
+        item.description = request.form['description']
+        item.category_id = categoryID
+        session.add(item)
+        session.commit()
         return redirect(url_for('viewItem', categoryID=categoryID))
 
 @app.route('/ItemCatalog/Items/<int:itemID>/Edit', methods=['GET','PUT'])
@@ -71,7 +81,10 @@ def editItem(itemID):
         return render_template('itemEdit.html', item=item)
     elif request.method == 'PUT':
         #make changes to item from user input
-        pass
+        item.name = request.form['name']
+        item.description = request.form['description']
+        session.add(item)
+        session.commit()
         return redirect(url_for('viewItem', categoryID=item.category_id))
 
 @app.route('/ItemCatalog/Items/<int:itemID>/Delete', methods=['GET','DELETE'])
@@ -83,7 +96,8 @@ def deleteItem(itemID):
     elif request.method == 'DELETE':
         category_id = item.category_id
         #remove item from database
-        pass
+        session.delete(item)
+        session.commit()
         return redirect(url_for('viewItem', categoryID=category_id))
 
 @app.route('/ItemCatalog/api')
