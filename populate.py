@@ -27,3 +27,9 @@ items = [['Bat', 'A long object used for hitting the ball. Often wooden or made 
         ['Snacks', 'Delicious food items, necessary for maintaining morale when the trip is taking a long time.', 5],
         ['Coffee', 'A special drink that keeps the drinker awake so they can continue driving longer.', 5]
         ]
+
+for item in items:
+    session.add(Item(name=item[0], description=item[1], category_id[2]))
+session.commit()
+
+print('Records Added!')
