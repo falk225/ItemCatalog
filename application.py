@@ -36,7 +36,6 @@ def editCategory(categoryID):
         #return edit category form
         return render_template('categoryEdit.html', category=category)
     elif request.method == 'POST':
-        print ('Ran')
         #update category with user input
         category.name = request.form['name']
         session.add(category)
@@ -57,8 +56,9 @@ def deleteCategory(categoryID):
 
 @app.route('/ItemCatalog/Categories/<int:categoryID>/Items/View')
 def viewItem(categoryID):
-    items = session.query(Item).filter_by(categoryID).all()
-    return render_template('itemView.html', items=items)
+    category = session.query(Category).filter_by(id=categoryID).one()
+    items = session.query(Item).filter_by(category_id=categoryID).all()
+    return render_template('itemView.html', category=category, items=items)
 
 @app.route('/ItemCatalog/Categories/<int:categoryID>/Items/Add', methods=['GET','POST'])
 def addItem(categoryID):

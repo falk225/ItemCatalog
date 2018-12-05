@@ -29,7 +29,7 @@ items = [['Bat', 'A long object used for hitting the ball. Often wooden or made 
         ]
 
 for item in items:
-    session.add(Item(name=item[0], description=item[1], category_id[2]))
+    session.add(Item(name=item[0], description=item[1], category_id=item[2]))
 session.commit()
 
 print('Records Added!')
