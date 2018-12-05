@@ -43,7 +43,7 @@ def editCategory(categoryID):
         session.commit()
         return redirect(url_for('viewCategories'))
 
-@app.route('/ItemCatalog/Categories/<int:categoryID>/Delete', methods=['GET','DELETE'])
+@app.route('/ItemCatalog/Categories/<int:categoryID>/Delete', methods=['GET','POST'])
 def deleteCategory(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one()
     if request.method == 'GET':
@@ -89,13 +89,13 @@ def editItem(itemID):
         session.commit()
         return redirect(url_for('viewItem', categoryID=item.category_id))
 
-@app.route('/ItemCatalog/Items/<int:itemID>/Delete', methods=['GET','DELETE'])
+@app.route('/ItemCatalog/Items/<int:itemID>/Delete', methods=['GET','POST'])
 def deleteItem(itemID):
     item = session.query(Item).filter_by(id=itemID).one()
     if request.method == 'GET':
         #return confirm deletion page
         return render_template('itemDelete.html', id=itemID)
-    elif request.method == 'DELETE':
+    elif request.method == 'POST':
         category_id = item.category_id
         #remove item from database
         session.delete(item)
