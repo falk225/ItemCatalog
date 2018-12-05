@@ -28,13 +28,15 @@ def addCategory():
         session.commit()
         return redirect(url_for('viewCategories'))
 
-@app.route('/ItemCatalog/Categories/<int:categoryID>/Edit', methods=['GET','PUT'])
+@app.route('/ItemCatalog/Categories/<int:categoryID>/Edit', methods=['GET','POST'])
 def editCategory(categoryID):
+    
     category = session.query(Category).filter_by(id=categoryID).one()
     if request.method == 'GET':
         #return edit category form
         return render_template('categoryEdit.html', category=category)
-    elif request.method == 'PUT':
+    elif request.method == 'POST':
+        print ('Ran')
         #update category with user input
         category.name = request.form['name']
         session.add(category)
@@ -73,13 +75,13 @@ def addItem(categoryID):
         session.commit()
         return redirect(url_for('viewItem', categoryID=categoryID))
 
-@app.route('/ItemCatalog/Items/<int:itemID>/Edit', methods=['GET','PUT'])
+@app.route('/ItemCatalog/Items/<int:itemID>/Edit', methods=['GET','POST'])
 def editItem(itemID):
     item = session.query(Item).filter_by(id=itemID).one()
     if request.method == 'GET':
         #return edit item form
         return render_template('itemEdit.html', item=item)
-    elif request.method == 'PUT':
+    elif request.method == 'POST':
         #make changes to item from user input
         item.name = request.form['name']
         item.description = request.form['description']

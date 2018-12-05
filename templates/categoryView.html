@@ -1,15 +1,16 @@
 {% extends "tmpBootStrap.html" %}
 {% block content %}
     <div class="container">
-        <div class='jumbotron jumbotron-fluid'>
+        <div class='jumbotron'>
             <h1 class='display-4 text-center'>Categories</h1>
         </div>
+    
+        {% include "tmpFlashMsgs.html" %}
+        <ul class = "list-group">
+            {% for category in categories %}
+                <li class="list-group-item">{{category.name}}</li>
+            {% endfor %}
+        </ul>
     </div>
-    {% include "tmpFlashMsgs.html" %}
-    <ul class = "list-group">
-        {% for category in categories %}
-            <li class="list-group-item">{{category.name}}</li>
-        {% endfor %}
-    </ul>
     
 {% endblock %}
