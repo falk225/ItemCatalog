@@ -94,7 +94,7 @@ def deleteItem(itemID):
     item = session.query(Item).filter_by(id=itemID).one()
     if request.method == 'GET':
         #return confirm deletion page
-        return render_template('itemDelete.html', id=itemID)
+        return render_template('itemDelete.html', item=item)
     elif request.method == 'POST':
         category_id = item.category_id
         #remove item from database
