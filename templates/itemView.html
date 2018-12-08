@@ -18,6 +18,8 @@
             <div id="collapse{{loop.index0}}" class="collapse" data-parent="#items">
                 <div class="card-body">
                     <!-- navigation buttons -->
+                    <h6>{{item.description}}</h6>
+                    
                     <a class='btn btn-outline-primary btn-sm' href='{{url_for("viewItem", categoryID=category.id)}}'>Item Details</a>
                     <a class='btn btn-outline-primary btn-sm' href='{{url_for("editItem", itemID=item.id)}}'>Edit</a>
                     <a class='btn btn-outline-secondary btn-sm' href='{{url_for("deleteItem", itemID=item.id)}}'>Delete</a>
