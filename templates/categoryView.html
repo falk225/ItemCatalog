@@ -1,32 +1,30 @@
 {% extends "tmpBootStrap.html" %}
 {% block content %}
-<div class="container">
-    <div class='jumbotron'>
-        <h1 class='display-4 text-center'>Categories</h1>
-    </div>
+<div class='jumbotron'>
+    <h1 class='display-4 text-center'>Categories</h1>
+</div>
 
-    {% include "tmpFlashMsgs.html" %}
+{% include "tmpFlashMsgs.html" %}
 
-    <div class="accordion" id="categories">
-        {% for category in categories %}
-            <div class="card" onmouseover="showActions(this)">
-                <div class="card-header" >
-                    <h4 class="card-title">
-                        <a role="button" data-toggle="collapse" href="#collapse{{loop.index0}}">
-                            {{category.name}}</a>
-                    </h4>
-                </div>
-                <div id="collapse{{loop.index0}}" class="collapse" data-parent="#categories">
-                    <div class="card-body">
-                        <!-- navigation buttons -->
-                        <a class='btn btn-outline-primary btn-sm' href='{{url_for("viewItem", categoryID=category.id)}}'>View Items</a>
-                        <a class='btn btn-outline-primary btn-sm' href='{{url_for("editCategory", categoryID=category.id)}}'>Edit</a>
-                        <a class='btn btn-outline-secondary btn-sm' href='{{url_for("deleteCategory", categoryID=category.id)}}'>Delete</a>
-                    </div>
+<div class="accordion" id="categories">
+    {% for category in categories %}
+        <div class="card" onmouseover="showActions(this)">
+            <div class="card-header">
+                <h4 class="card-title">
+                    <a role="button" data-toggle="collapse" href="#collapse{{loop.index0}}">
+                        {{category.name}}</a>
+                </h4>
+            </div>
+            <div id="collapse{{loop.index0}}" class="collapse" data-parent="#categories">
+                <div class="card-body">
+                    <!-- navigation buttons -->
+                    <a class='btn btn-outline-primary btn-sm' href='{{url_for("viewItem", categoryID=category.id)}}'>View Items</a>
+                    <a class='btn btn-outline-primary btn-sm' href='{{url_for("editCategory", categoryID=category.id)}}'>Edit</a>
+                    <a class='btn btn-outline-secondary btn-sm' href='{{url_for("deleteCategory", categoryID=category.id)}}'>Delete</a>
                 </div>
             </div>
-        {% endfor %}
-    </div>
+        </div>
+    {% endfor %}
 </div>
 
 <script>

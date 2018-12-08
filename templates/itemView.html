@@ -1,15 +1,41 @@
 {% extends "tmpBootStrap.html" %}
 {% block content %}
-    <div class="container">
-        <div class='jumbotron'>
-            <h1 class='display-4 text-center'>{{category.name}}</h1>
+<div class='jumbotron'>
+    <h1 class='display-4 text-center'>{{category.name}}</h1>
+</div>
+
+{% include "tmpFlashMsgs.html" %}
+
+<div class="accordion" id="items">
+    {% for item in items %}
+        <div class="card" onmouseover="showActions(this)">
+            <div class="card-header">
+                <h4 class="card-title">
+                    <a role="button" data-toggle="collapse" href="#collapse{{loop.index0}}">
+                        {{item.name}}</a>
+                </h4>
+            </div>
+            <div id="collapse{{loop.index0}}" class="collapse" data-parent="#items">
+                <div class="card-body">
+                    <!-- navigation buttons -->
+                    <a class='btn btn-outline-primary btn-sm' href='{{url_for("viewItem", categoryID=category.id)}}'>Item Details</a>
+                    <a class='btn btn-outline-primary btn-sm' href='{{url_for("editItem", itemID=item.id)}}'>Edit</a>
+                    <a class='btn btn-outline-secondary btn-sm' href='{{url_for("deleteItem", itemID=item.id)}}'>Delete</a>
+                </div>
+            </div>
         </div>
-    
-        {% include "tmpFlashMsgs.html" %}
-        <ul class = "list-group">
-            {% for item in items %}
-                <li class="list-group-item">{{item.name}}</li>
-            {% endfor %}
-        </ul>
-    </div>
+    {% endfor %}
+</div>
+
+<script>
+    function showActions(thiscard) {
+
+        var btn = thiscard.firstElementChild.firstElementChild.firstElementChild;
+        var actionCard = thiscard.getElementsByClassName("collapse")[0];
+        if(! actionCard.classList.contains("show")){
+            btn.click();
+        }
+    }
+</script>
+
 {% endblock %}
