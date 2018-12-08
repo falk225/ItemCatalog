@@ -1,5 +1,6 @@
 {% extends "tmpBootStrap.html" %}
 {% block content %}
+{% include "tmpHeader.html" %}
 <div class='jumbotron'>
     <h1 class='display-4 text-center'>{{category.name}}</h1>
 </div>
@@ -20,7 +21,6 @@
                     <!-- navigation buttons -->
                     <h6>{{item.description}}</h6>
                     
-                    <a class='btn btn-outline-primary btn-sm' href='{{url_for("viewItem", categoryID=category.id)}}'>Item Details</a>
                     <a class='btn btn-outline-primary btn-sm' href='{{url_for("editItem", itemID=item.id)}}'>Edit</a>
                     <a class='btn btn-outline-secondary btn-sm' href='{{url_for("deleteItem", itemID=item.id)}}'>Delete</a>
                 </div>
