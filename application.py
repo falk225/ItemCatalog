@@ -8,7 +8,8 @@ import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import httplib2
 import requests
-from flask import Flask, flash, jsonify, redirect, render_template, request, url_for
+from flask import Flask, flash, jsonify, redirect, render_template, \
+        request, url_for
 from flask import session as login_session
 from oauth2client.client import FlowExchangeError, flow_from_clientsecrets
 from sqlalchemy import create_engine, func
@@ -35,30 +36,26 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 @app.route('/login')
 def login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
-    # Use the client_secret.json file to identify the application requesting
-    # authorization. The client ID (from that file) and access scopes are required.
+
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         'client_secret.json',
         scopes=['profile', 'email', 'openid'])
 
-    # Indicate where the API server will redirect the user after the user completes
-    # the authorization flow. The redirect URI is required.
     flow.redirect_uri = url_for('oauth2callback', _external=True)
 
     # Generate URL for request to Google's OAuth 2.0 server.
     # Use kwargs to set optional request parameters.
     authorization_url, login_session['state'] = flow.authorization_url(
-        # Enable offline access so that you can refresh an access token without
-        # re-prompting the user for permission. Recommended for web server apps.
         access_type='offline',
-        # Enable incremental authorization. Recommended as a best practice.
         include_granted_scopes='true',
         state=state)
     return redirect(authorization_url)
+
 
 @app.route('/logout')
 def logout():
@@ -73,6 +70,7 @@ def logout():
     else:
         flash("You were not logged in.")
         return redirect(url_for('viewCategories'))
+
 
 @app.route('/oauth2callback')
 def oauth2callback():
@@ -102,7 +100,8 @@ def oauth2callback():
 
     # Check that the access token is valid.
     access_token = credentials.access_token
-    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'.format(access_token))
+    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo? \
+            access_token={}'.format(access_token))
     h = httplib2.Http()
     result = json.loads(h.request(url, 'GET')[1])
     # If there was an error in the access token info, abort.
@@ -156,10 +155,12 @@ def oauth2callback():
     flash("you are now logged in as {}".format(login_session['username']))
     return redirect(url_for('viewCategories'))
 
+
 def isLoggedIn():
     if login_session.get('gplus_id') is None:
         return None
     return login_session.get('user_id')
+
 
 def createUser(login_session):
     newUser = User(name=login_session['username'],
@@ -180,14 +181,15 @@ def getUserID(email):
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
-    except:
+    except Exception:
         return None
 
 
 @app.route('/')
 @app.route('/ItemCatalog')
 def viewCategories():
-    qryData = session.query(Item, func.count(Item.id)).group_by('category_id').all()
+    qryData = session.query(Item, func.count(
+        Item.id)).group_by('category_id').all()
     categories = []
     for row in qryData:
         category = row[0].category
@@ -195,59 +197,65 @@ def viewCategories():
         categories.append(category)
     if not isLoggedIn():
         flash("Log in to Add, Edit, or Delete Your Own Categories")
-    return render_template('categoryView.html', categories=categories, isLoggedIn=isLoggedIn())
+    return render_template(
+                            'categoryView.html',
+                            categories=categories,
+                            isLoggedIn=isLoggedIn())
 
 
 @app.route('/ItemCatalog/Categories/Add', methods=['GET', 'POST'])
 @login_required
 def addCategory():
     if request.method == 'GET':
-        #return add category form
+        # return add category form
         return render_template('categoryAdd.html')
     elif request.method == 'POST':
-        #add new category
-        category = Category(name=request.form['name'], user_id=login_session['user_id'])
+        # add new category
+        category = Category(
+            name=request.form['name'], user_id=login_session['user_id'])
         session.add(category)
         session.commit()
         return redirect(url_for('viewCategories'))
 
 
-@app.route('/ItemCatalog/Categories/<int:categoryID>/Edit', methods=['GET', 'POST'])
+@app.route('/ItemCatalog/Categories/<int:categoryID>/Edit',
+           methods=['GET', 'POST'])
 @login_required
 def editCategory(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one()
-    #restrict access to object creator
+    # restrict access to object creator
     if category.user.id != login_session['user_id']:
         flash("You may only edit categories you created.")
         return redirect(url_for('viewCategories'))
 
     if request.method == 'GET':
-        #return edit category form
+        # return edit category form
         return render_template('categoryEdit.html', category=category)
 
     elif request.method == 'POST':
-        #update category with user input
+        # update category with user input
         category.name = request.form['name']
         session.add(category)
         session.commit()
         return redirect(url_for('viewCategories'))
 
 
-@app.route('/ItemCatalog/Categories/<int:categoryID>/Delete', methods=['GET', 'POST'])
+@app.route('/ItemCatalog/Categories/<int:categoryID>/Delete',
+           methods=['GET', 'POST'])
 @login_required
 def deleteCategory(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one()
 
-    #restrict access to object creator
+    # restrict access to object creator
     if category.user.id != login_session['user_id']:
         flash("You may only delete categories you created.")
         return redirect(url_for('viewCategories'))
 
     if request.method == 'GET':
-        #return confirm delete form
+        # return confirm delete form
         return render_template('categoryDelete.html', category=category)
     elif request.method == 'POST':
-        #delete category from databaes
+        # delete category from databaes
         session.delete(category)
         session.commit()
         return redirect(url_for('viewCategories'))
@@ -259,23 +267,28 @@ def viewItem(categoryID):
     items = session.query(Item).filter_by(category_id=categoryID).all()
     if not isLoggedIn():
         flash("Log in to Add, Edit, or Delete Your Own Items")
-    return render_template('itemView.html', category=category, items=items, isLoggedIn=isLoggedIn())
+    return render_template(
+                        'itemView.html',
+                        category=category,
+                        items=items,
+                        isLoggedIn=isLoggedIn())
 
 
-@app.route('/ItemCatalog/Categories/<int:categoryID>/Items/Add', methods=['GET', 'POST'])
+@app.route('/ItemCatalog/Categories/<int:categoryID>/Items/Add',
+           methods=['GET', 'POST'])
 @login_required
 def addItem(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one()
-    #restrict access to object creator
+    # restrict access to object creator
     if category.user.id != login_session['user_id']:
         flash("You may only add items for categories you created.")
         return redirect(url_for('viewCategories'))
 
     if request.method == 'GET':
-        #return new item form
+        # return new item form
         return render_template('itemAdd.html', category=category)
     elif request.method == 'POST':
-        #add new item
+        # add new item
         item = Item(name=request.form['name'])
         item.description = request.form['description']
         item.category_id = categoryID
@@ -290,16 +303,16 @@ def addItem(categoryID):
 def editItem(itemID):
     item = session.query(Item).filter_by(id=itemID).one()
 
-    #restrict access to object creator
+    # restrict access to object creator
     if item.user.id != login_session['user_id']:
         flash("You may only edit items you created.")
         return redirect(url_for('viewCategories'))
 
     if request.method == 'GET':
-        #return edit item form
+        # return edit item form
         return render_template('itemEdit.html', item=item)
     elif request.method == 'POST':
-        #make changes to item from user input
+        # make changes to item from user input
         item.name = request.form['name']
         item.description = request.form['description']
         session.add(item)
@@ -312,17 +325,17 @@ def editItem(itemID):
 def deleteItem(itemID):
     item = session.query(Item).filter_by(id=itemID).one()
 
-    #restrict access to object creator
+    # restrict access to object creator
     if item.user.id != login_session['user_id']:
         flash("You may only delete items you created.")
         return redirect(url_for('viewCategories'))
 
     if request.method == 'GET':
-        #return confirm deletion page
+        # return confirm deletion page
         return render_template('itemDelete.html', item=item)
     elif request.method == 'POST':
         category_id = item.category_id
-        #remove item from database
+        # remove item from database
         session.delete(item)
         session.commit()
         return redirect(url_for('viewItem', categoryID=category_id))
@@ -333,10 +346,12 @@ def apiCategories():
     categories = session.query(Category).all()
     return jsonify(Categories=[cat.serialize for cat in categories])
 
+
 @app.route('/ItemCatalog/Categories/<int:categoryID>/Items/api')
 def apiItems(categoryID):
     items = session.query(Item).filter_by(category_id=categoryID).all()
     return jsonify(Items=[item.serialize for item in items])
+
 
 if(__name__ == '__main__'):
     app.config.update({
