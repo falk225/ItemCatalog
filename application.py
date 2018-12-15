@@ -60,6 +60,20 @@ def login():
         state=state)
     return redirect(authorization_url)
 
+@app.route('/logout')
+def logout():
+    if isLoggedIn:
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['user_id']
+        del login_session['access_token']
+        flash("You have successfully been logged out.")
+        return redirect(url_for('viewCategories'))
+    else:
+        flash("You were not logged in.")
+        return redirect(url_for('viewCategories'))
+
 @app.route('/oauth2callback')
 def oauth2callback():
     # check if response was an error
@@ -142,6 +156,10 @@ def oauth2callback():
     flash("you are now logged in as {}".format(login_session['username']))
     return redirect(url_for('viewCategories'))
 
+def isLoggedIn():
+    if login_session.get('gplus_id') is None:
+        return False
+    return True
 
 def createUser(login_session):
     newUser = User(name=login_session['username'],
@@ -169,12 +187,8 @@ def getUserID(email):
 @app.route('/')
 @app.route('/ItemCatalog')
 def viewCategories():
-    # if oidc.user_loggedin:
-    #     flash('logged in')
-    # else:
-    #     flash('not logged in')
     categories = session.query(Category).all()
-    return render_template('categoryView.html', categories=categories)
+    return render_template('categoryView.html', categories=categories, isLoggedIn=isLoggedIn())
 
 
 @app.route('/ItemCatalog/Categories/Add', methods=['GET', 'POST'])
@@ -194,7 +208,6 @@ def addCategory():
 @app.route('/ItemCatalog/Categories/<int:categoryID>/Edit', methods=['GET', 'POST'])
 @login_required
 def editCategory(categoryID):
-
     category = session.query(Category).filter_by(id=categoryID).one()
     if request.method == 'GET':
         #return edit category form
@@ -225,7 +238,7 @@ def deleteCategory(categoryID):
 def viewItem(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one()
     items = session.query(Item).filter_by(category_id=categoryID).all()
-    return render_template('itemView.html', category=category, items=items)
+    return render_template('itemView.html', category=category, items=items, isLoggedIn=isLoggedIn())
 
 
 @app.route('/ItemCatalog/Categories/<int:categoryID>/Items/Add', methods=['GET', 'POST'])
