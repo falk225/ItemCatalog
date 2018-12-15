@@ -16,14 +16,17 @@
                     <a role="button" data-toggle="collapse" href="#collapse{{loop.index0}}">
                         {{category.name}}</a>
                 </h4>
+                {% if isLoggedIn %}
+                    <h6 class="card-subtitle mb-2 text-muted">by {{category.user.name}}</h6>
+                {% endif %}
             </div>
             <div id="collapse{{loop.index0}}" class="collapse" data-parent="#categories">
                 <div class="card-body">
                     <!-- navigation buttons -->
                     <a class='btn btn-outline-primary btn-sm' href='{{url_for("viewItem", categoryID=category.id)}}'>View Items</a>
-                    {% if isLoggedIn %}
-                    <a class='btn btn-outline-primary btn-sm' href='{{url_for("editCategory", categoryID=category.id)}}'>Edit</a>
-                    <a class='btn btn-outline-secondary btn-sm' href='{{url_for("deleteCategory", categoryID=category.id)}}'>Delete</a>
+                    {% if isLoggedIn==category.user.id %}
+                        <a class='btn btn-outline-primary btn-sm' href='{{url_for("editCategory", categoryID=category.id)}}'>Edit</a>
+                        <a class='btn btn-outline-secondary btn-sm' href='{{url_for("deleteCategory", categoryID=category.id)}}'>Delete</a>
                     {% endif %}
                 </div>
             </div>

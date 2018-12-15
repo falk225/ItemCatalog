@@ -158,8 +158,8 @@ def oauth2callback():
 
 def isLoggedIn():
     if login_session.get('gplus_id') is None:
-        return False
-    return True
+        return None
+    return login_session.get('user_id')
 
 def createUser(login_session):
     newUser = User(name=login_session['username'],
@@ -201,7 +201,7 @@ def addCategory():
         return render_template('categoryAdd.html')
     elif request.method == 'POST':
         #add new category
-        category = Category(name=request.form['name'])
+        category = Category(name=request.form['name'], user_id=login_session['user_id'])
         session.add(category)
         session.commit()
         return redirect(url_for('viewCategories'))
@@ -211,9 +211,15 @@ def addCategory():
 @login_required
 def editCategory(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one()
+    #restrict access to object creator
+    if category.user.id != login_session['user_id']:
+        flash("You may only edit categories you created.")
+        return redirect(url_for('viewCategories'))
+
     if request.method == 'GET':
         #return edit category form
         return render_template('categoryEdit.html', category=category)
+
     elif request.method == 'POST':
         #update category with user input
         category.name = request.form['name']
@@ -226,6 +232,12 @@ def editCategory(categoryID):
 @login_required
 def deleteCategory(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one()
+
+    #restrict access to object creator
+    if category.user.id != login_session['user_id']:
+        flash("You may only delete categories you created.")
+        return redirect(url_for('viewCategories'))
+
     if request.method == 'GET':
         #return confirm delete form
         return render_template('categoryDelete.html', category=category)
@@ -248,8 +260,13 @@ def viewItem(categoryID):
 @app.route('/ItemCatalog/Categories/<int:categoryID>/Items/Add', methods=['GET', 'POST'])
 @login_required
 def addItem(categoryID):
+    category = session.query(Category).filter_by(id=categoryID).one()
+    #restrict access to object creator
+    if category.user.id != login_session['user_id']:
+        flash("You may only add items for categories you created.")
+        return redirect(url_for('viewCategories'))
+
     if request.method == 'GET':
-        category = session.query(Category).filter_by(id=categoryID).one()
         #return new item form
         return render_template('itemAdd.html', category=category)
     elif request.method == 'POST':
@@ -257,6 +274,7 @@ def addItem(categoryID):
         item = Item(name=request.form['name'])
         item.description = request.form['description']
         item.category_id = categoryID
+        item.user_id = login_session['user_id']
         session.add(item)
         session.commit()
         return redirect(url_for('viewItem', categoryID=categoryID))
@@ -266,6 +284,12 @@ def addItem(categoryID):
 @login_required
 def editItem(itemID):
     item = session.query(Item).filter_by(id=itemID).one()
+
+    #restrict access to object creator
+    if item.user.id != login_session['user_id']:
+        flash("You may only edit items you created.")
+        return redirect(url_for('viewCategories'))
+
     if request.method == 'GET':
         #return edit item form
         return render_template('itemEdit.html', item=item)
@@ -282,6 +306,12 @@ def editItem(itemID):
 @login_required
 def deleteItem(itemID):
     item = session.query(Item).filter_by(id=itemID).one()
+
+    #restrict access to object creator
+    if item.user.id != login_session['user_id']:
+        flash("You may only delete items you created.")
+        return redirect(url_for('viewCategories'))
+
     if request.method == 'GET':
         #return confirm deletion page
         return render_template('itemDelete.html', item=item)
