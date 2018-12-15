@@ -5,12 +5,8 @@
             <span class="fas fa-home" aria-hidden="true"> Back to Categories</span>
         </a>
     </div>
-    <!-- <div class="col-md-6 text-right">
-        {%if 'username' not in session %}
-        <a href="{url_for('showLogin')}">Click Here to Login </a>
-        {% else %}
-        <a href="{url_for('disconnect')}">Logout </a>
-        {% endif %}
-    </div> -->
+    <div class="col-md-6 text-right">
+        <a href="{{url_for('login')}}">Click Here to Login </a>
+    </div>
     
 </div>

@@ -7,9 +7,13 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+session.add(User(name="Example User", google_id=19843291, email="jdoe@example.com"))
+session.commit()
+user_id = session.query(User).filter_by(name="Example User").first().id
+
 categories = ['Baseball', 'Boxing', 'Camping', 'Painting', 'Road Tripping']
 for category in categories:
-    session.add(Category(name=category))
+    session.add(Category(name=category, user_id=user_id))
 session.commit()
 
 items = [['Bat', 'A long object used for hitting the ball. Often wooden or made of metal.', 1],
@@ -29,7 +33,7 @@ items = [['Bat', 'A long object used for hitting the ball. Often wooden or made 
         ]
 
 for item in items:
-    session.add(Item(name=item[0], description=item[1], category_id=item[2]))
+    session.add(Item(name=item[0], description=item[1], category_id=item[2], user_id=user_id))
 session.commit()
 
 print('Records Added!')

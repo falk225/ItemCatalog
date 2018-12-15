@@ -9,6 +9,8 @@ class User(Base):
     __tablename__ = 'users'
 
     name = Column(String(250), nullable = False)
+    email = Column(String(250), nullable = False)
+    google_id = Column(Integer, nullable=False)
     id = Column(Integer, primary_key=True)
 
 class Category(Base):
