@@ -328,12 +328,15 @@ def deleteItem(itemID):
         return redirect(url_for('viewItem', categoryID=category_id))
 
 
-@app.route('/ItemCatalog/api')
-@login_required
-def jsonifyAll():
-    pass
-    return 'json of all categories and items'
+@app.route('/ItemCatalog/Categories/api')
+def apiCategories():
+    categories = session.query(Category).all()
+    return jsonify(Categories=[cat.serialize for cat in categories])
 
+@app.route('/ItemCatalog/Categories/<int:categoryID>/Items/api')
+def apiItems(categoryID):
+    items = session.query(Item).filter_by(category_id=categoryID).all()
+    return jsonify(Items=[item.serialize for item in items])
 
 if(__name__ == '__main__'):
     app.config.update({
