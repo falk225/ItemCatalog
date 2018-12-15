@@ -188,6 +188,8 @@ def getUserID(email):
 @app.route('/ItemCatalog')
 def viewCategories():
     categories = session.query(Category).all()
+    if not isLoggedIn():
+        flash("Log in to Add, Edit, or Delete Your Own Categories")
     return render_template('categoryView.html', categories=categories, isLoggedIn=isLoggedIn())
 
 
@@ -238,6 +240,8 @@ def deleteCategory(categoryID):
 def viewItem(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one()
     items = session.query(Item).filter_by(category_id=categoryID).all()
+    if not isLoggedIn():
+        flash("Log in to Add, Edit, or Delete Your Own Items")
     return render_template('itemView.html', category=category, items=items, isLoggedIn=isLoggedIn())
 
 

@@ -21,8 +21,10 @@
                 <div class="card-body">
                     <!-- navigation buttons -->
                     <a class='btn btn-outline-primary btn-sm' href='{{url_for("viewItem", categoryID=category.id)}}'>View Items</a>
+                    {% if isLoggedIn %}
                     <a class='btn btn-outline-primary btn-sm' href='{{url_for("editCategory", categoryID=category.id)}}'>Edit</a>
                     <a class='btn btn-outline-secondary btn-sm' href='{{url_for("deleteCategory", categoryID=category.id)}}'>Delete</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
