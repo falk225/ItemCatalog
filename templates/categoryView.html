@@ -15,6 +15,7 @@
                 <h4 class="card-title">
                     <a role="button" data-toggle="collapse" href="#collapse{{loop.index0}}">
                         {{category.name}}</a>
+                        <span class="badge badge-primary">{{category.count}} items</span>
                 </h4>
                 {% if isLoggedIn %}
                     <h6 class="card-subtitle mb-2 text-muted">by {{category.user.name}}</h6>

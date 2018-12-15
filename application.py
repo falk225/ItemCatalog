@@ -11,7 +11,7 @@ import requests
 from flask import Flask, flash, jsonify, redirect, render_template, request, url_for
 from flask import session as login_session
 from oauth2client.client import FlowExchangeError, flow_from_clientsecrets
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 
 from models import Base, Category, Item, User
@@ -187,7 +187,12 @@ def getUserID(email):
 @app.route('/')
 @app.route('/ItemCatalog')
 def viewCategories():
-    categories = session.query(Category).all()
+    qryData = session.query(Item, func.count(Item.id)).group_by('category_id').all()
+    categories = []
+    for row in qryData:
+        category = row[0].category
+        category.count = row[1]
+        categories.append(category)
     if not isLoggedIn():
         flash("Log in to Add, Edit, or Delete Your Own Categories")
     return render_template('categoryView.html', categories=categories, isLoggedIn=isLoggedIn())
