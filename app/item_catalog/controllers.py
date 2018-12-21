@@ -243,7 +243,7 @@ def viewCategories():
                             isLoggedIn=isLoggedIn())
 
 
-@item_catalog.route('/Categories/Add', methods=['GET', 'POST'])
+@item_catalog.route('/categories/add', methods=['GET', 'POST'])
 @login_required
 def addCategory():
     if request.method == 'GET':
@@ -258,7 +258,7 @@ def addCategory():
         return redirect(url_for('item_catalog.viewCategories'))
 
 
-@item_catalog.route('/Categories/<int:categoryID>/Edit',
+@item_catalog.route('/categories/<int:categoryID>/edit',
            methods=['GET', 'POST'])
 @login_required
 @validate_category
@@ -278,7 +278,7 @@ def editCategory(categoryID):
         return redirect(url_for('item_catalog.viewCategories'))
 
 
-@item_catalog.route('/Categories/<int:categoryID>/Delete',
+@item_catalog.route('/categories/<int:categoryID>/delete',
            methods=['GET', 'POST'])
 @login_required
 @validate_category
@@ -296,7 +296,7 @@ def deleteCategory(categoryID):
         return redirect(url_for('item_catalog.viewCategories'))
 
 
-@item_catalog.route('/Categories/<int:categoryID>/Items/View')
+@item_catalog.route('/categories/<int:categoryID>/items/view')
 @validate_category
 def viewItem(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one_or_none()
@@ -311,7 +311,7 @@ def viewItem(categoryID):
                         isLoggedIn=isLoggedIn())
 
 
-@item_catalog.route('/Categories/<int:categoryID>/Items/Add',
+@item_catalog.route('/categories/<int:categoryID>/items/add',
            methods=['GET', 'POST'])
 @login_required
 @validate_category
@@ -333,7 +333,7 @@ def addItem(categoryID):
         return redirect(url_for('item_catalog.viewItem', categoryID=categoryID))
 
 
-@item_catalog.route('/Items/<int:itemID>/Edit', methods=['GET', 'POST'])
+@item_catalog.route('/items/<int:itemID>/edit', methods=['GET', 'POST'])
 @login_required
 @validate_item
 @ownership_required
@@ -352,7 +352,7 @@ def editItem(itemID):
         return redirect(url_for('item_catalog.viewItem', categoryID=item.category_id))
 
 
-@item_catalog.route('/Items/<int:itemID>/Delete', methods=['GET', 'POST'])
+@item_catalog.route('/items/<int:itemID>/delete', methods=['GET', 'POST'])
 @login_required
 @validate_item
 @ownership_required
@@ -370,13 +370,13 @@ def deleteItem(itemID):
         return redirect(url_for('item_catalog.viewItem', categoryID=category_id))
 
 
-@item_catalog.route('/Categories/api')
+@item_catalog.route('/categories/api')
 def apiCategories():
     categories = session.query(Category).all()
     return jsonify(Categories=[cat.serialize for cat in categories])
 
 
-@item_catalog.route('/Categories/<int:categoryID>/Items/api')
+@item_catalog.route('/categories/<int:categoryID>/items/api')
 def apiItems(categoryID):
     items = session.query(Item).filter_by(category_id=categoryID).all()
     return jsonify(Items=[item.serialize for item in items])
