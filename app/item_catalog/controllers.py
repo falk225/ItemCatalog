@@ -223,7 +223,10 @@ def addCategory():
            methods=['GET', 'POST'])
 @login_required
 def editCategory(categoryID):
-    category = session.query(Category).filter_by(id=categoryID).one()
+    category = session.query(Category).filter_by(id=categoryID).one_or_none()
+    # if query doesn't return a result
+    if not category:
+        return render_template('404.html')
     # restrict access to object creator
     if category.user.id != login_session['user_id']:
         flash("You may only edit categories you created.")
@@ -245,7 +248,10 @@ def editCategory(categoryID):
            methods=['GET', 'POST'])
 @login_required
 def deleteCategory(categoryID):
-    category = session.query(Category).filter_by(id=categoryID).one()
+    category = session.query(Category).filter_by(id=categoryID).one_or_none()
+    # if query doesn't return a result
+    if not category:
+        return render_template('404.html')
 
     # restrict access to object creator
     if category.user.id != login_session['user_id']:
@@ -264,7 +270,11 @@ def deleteCategory(categoryID):
 
 @item_catalog.route('/Categories/<int:categoryID>/Items/View')
 def viewItem(categoryID):
-    category = session.query(Category).filter_by(id=categoryID).one()
+    category = session.query(Category).filter_by(id=categoryID).one_or_none()
+    # if query doesn't return a result
+    if not category:
+        return render_template('404.html')
+
     items = session.query(Item).filter_by(category_id=categoryID).all()
     if not isLoggedIn():
         flash("Log in to Add, Edit, or Delete Your Own Items")
@@ -279,7 +289,11 @@ def viewItem(categoryID):
            methods=['GET', 'POST'])
 @login_required
 def addItem(categoryID):
-    category = session.query(Category).filter_by(id=categoryID).one()
+    category = session.query(Category).filter_by(id=categoryID).one_or_none()
+    # if query doesn't return a result
+    if not category:
+        return render_template('404.html')
+
     # restrict access to object creator
     if category.user.id != login_session['user_id']:
         flash("You may only add items for categories you created.")
@@ -302,7 +316,10 @@ def addItem(categoryID):
 @item_catalog.route('/Items/<int:itemID>/Edit', methods=['GET', 'POST'])
 @login_required
 def editItem(itemID):
-    item = session.query(Item).filter_by(id=itemID).one()
+    item = session.query(Item).filter_by(id=itemID).one_or_none()
+    # if query doesn't return a result
+    if not item:
+        return render_template('404.html')
 
     # restrict access to object creator
     if item.user.id != login_session['user_id']:
@@ -324,7 +341,10 @@ def editItem(itemID):
 @item_catalog.route('/Items/<int:itemID>/Delete', methods=['GET', 'POST'])
 @login_required
 def deleteItem(itemID):
-    item = session.query(Item).filter_by(id=itemID).one()
+    item = session.query(Item).filter_by(id=itemID).one_or_none()
+    # if query doesn't return a result
+    if not item:
+        return render_template('404.html')
 
     # restrict access to object creator
     if item.user.id != login_session['user_id']:

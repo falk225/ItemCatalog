@@ -9,4 +9,4 @@ This application requires a client_secret.json file be created and put in the sa
 You will need to run populate.py to create the itemcatalog.db file and add the example dataset.
 
 ### Start Server
-Run application.py in python to start serving webpages on localhost:8000. Visit Http://localhost:8000 to load the home page.
+Run run.py in python to start serving webpages on localhost:8000. Visit Http://localhost:8000 to load the home page.
