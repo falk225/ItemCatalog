@@ -1,0 +1,50 @@
+{% extends "tmpBootStrap.html" %}
+{% block content %}
+{% include "tmpHeader.html" %}
+<div class='jumbotron'>
+    <h1 class='display-4 text-center'>Categories</h1>
+</div>
+
+{% include "tmpFlashMsgs.html" %}
+
+<a class='btn btn-outline-primary btn-sm btn-block' href='{{url_for("item_catalog.addCategory")}}'>Create a new category</a>
+<div class="accordion" id="categories">
+    {% for row in query_data %}
+        <div class="card" onmouseover="showActions(this)">
+            <div class="card-header">
+                <h4 class="card-title">
+                    <a role="button" data-toggle="collapse" href="#collapse{{loop.index0}}">
+                        {{row.Category.name}}</a>
+                        <span class="badge badge-primary">{{row.count}} items</span>
+                </h4>
+                {% if isLoggedIn %}
+                    <h6 class="card-subtitle mb-2 text-muted">by {{row.Category.user.name}}</h6>
+                {% endif %}
+            </div>
+            <div id="collapse{{loop.index0}}" class="collapse" data-parent="#categories">
+                <div class="card-body">
+                    <!-- navigation buttons -->
+                    <a class='btn btn-outline-primary btn-sm' href='{{url_for("item_catalog.viewItem", categoryID=row.Category.id)}}'>View Items</a>
+                    {% if isLoggedIn==row.Category.user.id %}
+                        <a class='btn btn-outline-primary btn-sm' href='{{url_for("item_catalog.editCategory", categoryID=row.Category.id)}}'>Edit</a>
+                        <a class='btn btn-outline-secondary btn-sm' href='{{url_for("item_catalog.deleteCategory", categoryID=row.Category.id)}}'>Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    function showActions(thiscard) {
+
+        var btn = thiscard.firstElementChild.firstElementChild.firstElementChild;
+        var actionCard = thiscard.getElementsByClassName("collapse")[0];
+        if(! actionCard.classList.contains("show")){
+            btn.click();
+        }
+    }
+</script>
+
+
+{% endblock %}

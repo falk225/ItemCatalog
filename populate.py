@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Base, User, Category, Item
+from app.item_catalog.models import Base, User, Category, Item
 
 engine = create_engine('sqlite:///itemcatalog.db?check_same_thread=False')
 Base.metadata.bind = engine

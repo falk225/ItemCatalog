@@ -1,0 +1,17 @@
+{% extends "tmpBootStrap.html" %}
+{% block content %}
+    <div class='container'>
+        <div class='jumbotron'>
+            <h1 class="display-4 text-center">Create a New Category</h1>
+        </div>
+        <form action="{{url_for('item_catalog.addCategory')}}" method='POST'>
+            <div class='form-group'>
+                <label for='catName'>Category Name:</label>
+                <input type='text' id='catName' class='form-control' size='80' name='name' placeholder="Enter new category name here...">
+                <br>
+                <input class='btn btn-outline-primary' type='submit' value='Create New'>
+                <a class='btn btn-outline-secondary' href='{{url_for("item_catalog.viewCategories")}}'>Cancel</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
