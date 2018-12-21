@@ -37,9 +37,48 @@ from app import app, session
 
 def login_required(f):
     @wraps(f)
+    # if not logged in redirect to login page
     def decorated_function(*args, **kwargs):
         if login_session.get('gplus_id') is None:
             return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def ownership_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # restrict access to object creator
+        if 'categoryID' in kwargs:
+            obj = session.query(Category).filter_by(id=kwargs['categoryID']).one_or_none()
+        elif 'itemID' in kwargs:
+            obj = session.query(Item).filter_by(id=kwargs['itemID']).one_or_none()
+        else:
+            return render_template('404.html')
+        if obj.user.id != login_session['user_id']:
+            flash("You may only change things you created.")
+            return redirect(url_for('item_catalog.viewCategories'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def validate_category(f):
+    @wraps(f)
+    # if not valid category redirect to 404
+    def decorated_function(*args, **kwargs):
+        category = session.query(Category).filter_by(id=kwargs['categoryID']).one_or_none()
+        # if query doesn't return a result
+        if not category:
+            return render_template('404.html')
+        return f(*args, **kwargs)
+    return decorated_function
+
+def validate_item(f):
+    @wraps(f)
+    # if not valid category redirect to 404
+    def decorated_function(*args, **kwargs):
+        item = session.query(Item).filter_by(id=kwargs['itemID']).one_or_none()
+        # if query doesn't return a result
+        if not item:
+            return render_template('404.html')
         return f(*args, **kwargs)
     return decorated_function
 
@@ -222,15 +261,10 @@ def addCategory():
 @item_catalog.route('/Categories/<int:categoryID>/Edit',
            methods=['GET', 'POST'])
 @login_required
+@validate_category
+@ownership_required
 def editCategory(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one_or_none()
-    # if query doesn't return a result
-    if not category:
-        return render_template('404.html')
-    # restrict access to object creator
-    if category.user.id != login_session['user_id']:
-        flash("You may only edit categories you created.")
-        return redirect(url_for('item_catalog.viewCategories'))
 
     if request.method == 'GET':
         # return edit category form
@@ -247,16 +281,10 @@ def editCategory(categoryID):
 @item_catalog.route('/Categories/<int:categoryID>/Delete',
            methods=['GET', 'POST'])
 @login_required
+@validate_category
+@ownership_required
 def deleteCategory(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one_or_none()
-    # if query doesn't return a result
-    if not category:
-        return render_template('404.html')
-
-    # restrict access to object creator
-    if category.user.id != login_session['user_id']:
-        flash("You may only delete categories you created.")
-        return redirect(url_for('item_catalog.viewCategories'))
 
     if request.method == 'GET':
         # return confirm delete form
@@ -269,11 +297,9 @@ def deleteCategory(categoryID):
 
 
 @item_catalog.route('/Categories/<int:categoryID>/Items/View')
+@validate_category
 def viewItem(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one_or_none()
-    # if query doesn't return a result
-    if not category:
-        return render_template('404.html')
 
     items = session.query(Item).filter_by(category_id=categoryID).all()
     if not isLoggedIn():
@@ -288,16 +314,10 @@ def viewItem(categoryID):
 @item_catalog.route('/Categories/<int:categoryID>/Items/Add',
            methods=['GET', 'POST'])
 @login_required
+@validate_category
+@ownership_required
 def addItem(categoryID):
     category = session.query(Category).filter_by(id=categoryID).one_or_none()
-    # if query doesn't return a result
-    if not category:
-        return render_template('404.html')
-
-    # restrict access to object creator
-    if category.user.id != login_session['user_id']:
-        flash("You may only add items for categories you created.")
-        return redirect(url_for('item_catalog.viewCategories'))
 
     if request.method == 'GET':
         # return new item form
@@ -315,16 +335,10 @@ def addItem(categoryID):
 
 @item_catalog.route('/Items/<int:itemID>/Edit', methods=['GET', 'POST'])
 @login_required
+@validate_item
+@ownership_required
 def editItem(itemID):
     item = session.query(Item).filter_by(id=itemID).one_or_none()
-    # if query doesn't return a result
-    if not item:
-        return render_template('404.html')
-
-    # restrict access to object creator
-    if item.user.id != login_session['user_id']:
-        flash("You may only edit items you created.")
-        return redirect(url_for('item_catalog.viewCategories'))
 
     if request.method == 'GET':
         # return edit item form
@@ -340,16 +354,10 @@ def editItem(itemID):
 
 @item_catalog.route('/Items/<int:itemID>/Delete', methods=['GET', 'POST'])
 @login_required
+@validate_item
+@ownership_required
 def deleteItem(itemID):
     item = session.query(Item).filter_by(id=itemID).one_or_none()
-    # if query doesn't return a result
-    if not item:
-        return render_template('404.html')
-
-    # restrict access to object creator
-    if item.user.id != login_session['user_id']:
-        flash("You may only delete items you created.")
-        return redirect(url_for('item_catalog.viewCategories'))
 
     if request.method == 'GET':
         # return confirm deletion page
