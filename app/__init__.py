@@ -17,8 +17,8 @@ os.chdir(dname)
 
 # Configurations
 app.config.from_object('config')
-#app.CLIENT_SECRET_JSON = "{}/client_secret.json".format(dname)
-app.CLIENT_SECRET_JSON = "{}\\client_secret.json".format(dname)
+app.CLIENT_SECRET_JSON = "{}/client_secret.json".format(dname) #linux path style
+#app.CLIENT_SECRET_JSON = "{}\\client_secret.json".format(dname)  #windows path style
 
 # Define the database object which is imported
 # by modules and controllers
@@ -29,15 +29,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.item_catalog.models import Base
 
-engine = create_engine('postgresql://postgres:udacity@localhost:5432/catalog')
+engine = create_engine('postgresql://flaskdb:udacity@/var/run/postgresql:5432/itemcatalog')
 Base.metadata.create_all(engine)
-
-engine = create_engine('postgresql://postgres:udacity@localhost:5432/catalog')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
  
-
 
 # Sample HTTP error handling
 @app.errorhandler(404)

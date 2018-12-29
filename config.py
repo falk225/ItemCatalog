@@ -6,7 +6,7 @@ import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
 
 # Define the database
-SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:udacity@localhost:5432/catalog'
+SQLALCHEMY_DATABASE_URI = 'postgresql://flaskdb:udacity@/var/run/postgresql:5432/itemcatalog'
 #DATABASE_CONNECT_OPTIONS = {"check_same_thread=False"}
 
 # Application threads. A common general assumption is
