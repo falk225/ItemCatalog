@@ -29,7 +29,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.item_catalog.models import Base
 
-engine = create_engine('postgresql://flaskdb:udacity@/var/run/postgresql:5432/itemcatalog')
+engine = create_engine('postgresql://flaskdb:udacity@localhost:5432/itemcatalog')
 Base.metadata.create_all(engine)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
