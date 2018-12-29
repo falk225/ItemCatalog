@@ -1,13 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.item_catalog.models import Base, User, Category, Item
+from item_catalog.models import Base, User, Category, Item
 
-engine = create_engine('sqlite:///itemcatalog.db?check_same_thread=False')
+engine = create_engine('postgresql://postgres:udacity@localhost:5432/catalog')
+Base.metadata.create_all(engine)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-session.add(User(name="Example User", google_id=19843291, email="jdoe@example.com"))
+session.add(User(name="Example User", google_id="19843291", email="jdoe@example.com"))
 session.commit()
 user_id = session.query(User).filter_by(name="Example User").first().id
 

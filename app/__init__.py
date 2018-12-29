@@ -17,7 +17,8 @@ os.chdir(dname)
 
 # Configurations
 app.config.from_object('config')
-app.CLIENT_SECRET_JSON = "{}/client_secret.json".format(dname)
+#app.CLIENT_SECRET_JSON = "{}/client_secret.json".format(dname)
+app.CLIENT_SECRET_JSON = "{}\\client_secret.json".format(dname)
 
 # Define the database object which is imported
 # by modules and controllers
@@ -28,14 +29,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.item_catalog.models import Base
 
-engine = create_engine('sqlite:///itemcatalog.db')
+engine = create_engine('postgresql://postgres:udacity@localhost:5432/catalog')
 Base.metadata.create_all(engine)
 
-engine = create_engine('sqlite:///itemcatalog.db?check_same_thread=False')
+engine = create_engine('postgresql://postgres:udacity@localhost:5432/catalog')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
-
+ 
 
 
 # Sample HTTP error handling
