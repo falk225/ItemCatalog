@@ -10,9 +10,14 @@ app = Flask(__name__)
 import os
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
+
 # Configurations
 app.config.from_object('config')
-app.CLIENT_SECRET_JSON = "app/client_secret.json"
+app.CLIENT_SECRET_JSON = "{}/client_secret.json".format(dname)
 
 # Define the database object which is imported
 # by modules and controllers
