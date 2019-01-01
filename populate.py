@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from item_catalog.models import Base, User, Category, Item
+from app.item_catalog.models import Base, User, Category, Item
 
 from app import app
 engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
